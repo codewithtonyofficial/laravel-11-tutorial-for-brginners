@@ -34,7 +34,7 @@ class PostController extends Controller
             'content' => ['required', 'min:10'],
         ]);
 
-        $post = Post::create($validated);
+        auth()->user()->posts()->create($validated);
 
         return to_route('posts.index');
     }
@@ -52,6 +52,9 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        if ($post->user_id !== auth()->id()) {
+            abort(403);
+        }
         return view('posts.edit', ['post' => $post]);
     }
 
@@ -65,6 +68,7 @@ class PostController extends Controller
             'content' => ['required', 'min:10'],
         ]);
         $post->update($validated);
+        return to_route('posts.show', ['post' => $post]);
     }
 
     /**
