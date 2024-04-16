@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -52,9 +54,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        if ($post->user_id !== auth()->id()) {
-            abort(403);
-        }
+        Gate::authorize('update', $post);
         return view('posts.edit', ['post' => $post]);
     }
 
@@ -63,6 +63,7 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+        Gate::authorize('update', $post);
         $validated = $request->validate([
             'title' => ['required', 'min:5', 'max:255'],
             'content' => ['required', 'min:10'],
@@ -76,6 +77,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        Gate::authorize('delete', $post);
         $post->delete();
         return to_route('posts.index');
     }
