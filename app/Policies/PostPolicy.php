@@ -8,6 +8,15 @@ use Illuminate\Auth\Access\Response;
 
 class PostPolicy
 {
+
+    public function before(User $user, string $ability): bool|null
+    {
+        if ($user->is_admin) {
+            return true;
+        }
+
+        return false;
+    }
     /**
      * Determine whether the user can view any models.
      */
