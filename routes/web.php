@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LoginUserController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RegisterUserController;
@@ -15,12 +16,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
     Route::post('/logout', [LoginUserController::class, 'logout'])->name('logout');
 
-    Route::get('/admin', function () {
-        return 'You are logged in as an admin';
-    })->can('is-admin')->name('admin');
+    Route::get('/admin', [AdminController::class, 'index'])->middleware('is-admin')->name('admin');
 });
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
-Route::get('/posts/{post}', [PostController::class, 'show'])->middleware('can-view-post')->name('posts.show');
+Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterUserController::class, 'register'])->name('register');
