@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendNewPostMailJob;
 use App\Models\Post;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
@@ -34,10 +35,14 @@ class PostController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'min:5', 'max:255'],
             'content' => ['required', 'min:10'],
+            'thumbnail' => ['required', 'image'],
         ]);
+
+        $validated['thumbnail'] = $request->file('thumbnail')->store('thumbnails');
 
         auth()->user()->posts()->create($validated);
 
+        dispatch(new SendNewPostMailJob(['email' => auth()->user()->email, 'name' => auth()->user()->name, 'title' => $validated['title']]));
         return to_route('posts.index');
     }
 
@@ -67,7 +72,13 @@ class PostController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'min:5', 'max:255'],
             'content' => ['required', 'min:10'],
+            'thumbnail' => ['sometimes', 'image'],
         ]);
+
+        if ($request->hasFile('thumbnail')) {
+            File::delete(storage_path('app/public/' . $post->thumbnail));
+            $validated['thumbnail'] = $request->file('thumbnail')->store('thumbnails');
+        }
         $post->update($validated);
         return to_route('posts.show', ['post' => $post]);
     }
@@ -78,6 +89,7 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         Gate::authorize('delete', $post);
+        File::delete(storage_path('app/public/' . $post->thumbnail));
         $post->delete();
         return to_route('posts.index');
     }

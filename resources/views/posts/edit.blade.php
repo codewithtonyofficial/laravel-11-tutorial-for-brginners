@@ -1,7 +1,7 @@
 <x-layout>
     <x-header>Posts Edit Page</x-header>
     <div class="max-w-2xl mx-auto p-4 bg-slate-200 dark:bg-slate-900 rounded-lg">
-        <form method="POST" action="{{ route('posts.update', $post->id) }}">
+        <form method="POST" action="{{ route('posts.update', $post->id) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="mb-6">
@@ -22,7 +22,16 @@
                 @error('content')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
-
+            </div>
+            <div class="mb-6">
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    for="file_input">Thumbnail</label>
+                <input
+                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                    id="thumbnail" name="thumbnail" type="file">
+                @error('thumbnail')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
             <div class="mb-6">
                 <button type="submit"
