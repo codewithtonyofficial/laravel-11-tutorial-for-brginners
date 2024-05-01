@@ -15,7 +15,7 @@ class PostPolicy
             return true;
         }
 
-        return false;
+        return null;
     }
     /**
      * Determine whether the user can view any models.

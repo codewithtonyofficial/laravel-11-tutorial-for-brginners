@@ -19,6 +19,11 @@
     </section>
     <div class="max-w-6xl mx-auto sm:px-6 lg:px-8 mt-8 bg-slate-50 dark:bg-slate-700 rounded-lg">
         <h1 class="text-3xl font-bold text-center text-indigo-600 dark:text-indigo-400">{{ $post->title }}</h1>
+        <div class="flex justify-center space-x-4">
+            <span
+                class="text-sm text-center text-gray-700 dark:text-gray-400">{{ $post->created_at->diffForHumans() }}</span>
+            <span class="text-sm text-center text-green-700 dark:text-gray-400">{{ $post->user->name }}</span>
+        </div>
         <main class="mt-4">
             <p class="text-lg text-center text-gray-700 dark:text-gray-400">{{ $post->content }}</p>
         </main>
